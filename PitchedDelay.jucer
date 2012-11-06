@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.0.0"
+              bundleIdentifier="com.lkjb.PitchedDelay" buildVST="1" buildRTAS="0"
+              buildAU="1" pluginName="PitchedDelay" pluginDesc="PitchedDelay"
+              pluginManufacturer="lkjb" pluginManufacturerCode="lkjb" pluginCode="lkPD"
+              pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="0" pluginWantsMidiIn="0"
+              pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0" pluginTailLength="0"
+              pluginEditorRequiresKeys="1" pluginAUExportPrefix="PitchedDelayAU"
+              pluginAUViewClass="PitchedDelayAU_V1" pluginRTASCategory="" jucerVersion="3.0.0"
+              aaxIdentifier="com.yourcompany.PitchedDelay" pluginAAXCategory="AAX_ePlugInCategory_Dynamics">
+  <EXPORTFORMATS>
+    <VS2008 targetFolder="Builds/VisualStudio2008" libraryType="1" juceFolder="./juce"
+            vstFolder="./vstsdk2.4" extraCompilerFlags="/MP">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="0" isDebug="1"
+                       optimisation="1" targetName="lkjb_PitchedDelay"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" isDebug="0"
+                       optimisation="2" targetName="lkjb_PitchedDelay"/>
+      </CONFIGURATIONS>
+    </VS2008>
+    <XCODE_MAC targetFolder="Builds/MacOSX" objCExtraSuffix="gGFDaT" juceFolder="./juce"
+               vstFolder="./vstsdk2.4" extraLinkerFlags="-framework Accelerate -framework vecLib -lDiracLE"
+               postbuildCommand="&#13;&#10;# This script takes the build product and copies it to the AU, VST, and RTAS folders, depending on &#13;&#10;# which plugin types you've built&#13;&#10;&#13;&#10;original=$CONFIGURATION_BUILD_DIR/$FULL_PRODUCT_NAME&#13;&#10;&#13;&#10;# this looks inside the binary to detect which platforms are needed.. &#13;&#10;copyAU=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'AudioUnit' | wc -l&#96;&#13;&#10;copyVST=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'VSTPlugin' | wc -l&#96;&#13;&#10;copyRTAS=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'CProcess' | wc -l&#96;&#13;&#10;copyAAX=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'GetEffectDescriptions' | wc -l&#96;&#13;&#10;&#13;&#10;if [ $copyAU -gt 0 ]; then&#13;&#10;  echo &quot;Copying to AudioUnit folder...&quot;&#13;&#10;  AU=~/Library/Audio/Plug-Ins/Components/$PRODUCT_NAME.component&#13;&#10;  if [ -d &quot;$AU&quot; ]; then &#13;&#10;    rm -r &quot;$AU&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  cp -r &quot;$original&quot; &quot;$AU&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMwPTul/BNDLPTul/g' &quot;$AU/Contents/PkgInfo&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMw/BNDL/g' &quot;$AU/Contents/$INFOPLIST_FILE&quot;&#13;&#10;fi&#13;&#10;&#13;&#10;if [ $copyVST -gt 0 ]; then&#13;&#10;  echo &quot;Copying to VST folder...&quot;&#13;&#10;  VST=~/Library/Audio/Plug-Ins/VST/$PRODUCT_NAME.vst&#13;&#10;  if [ -d &quot;$VST&quot; ]; then &#13;&#10;    rm -r &quot;$VST&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  cp -r &quot;$original&quot; &quot;$VST&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMwPTul/BNDLPTul/g' &quot;$VST/Contents/PkgInfo&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMw/BNDL/g' &quot;$VST/Contents/$INFOPLIST_FILE&quot;&#13;&#10;fi&#13;&#10;&#13;&#10;if [ $copyRTAS -gt 0 ]; then&#13;&#10;  echo &quot;Copying to RTAS folder...&quot;&#13;&#10;  RTAS=/Library/Application\ Support/Digidesign/Plug-Ins/$PRODUCT_NAME.dpm&#13;&#10;  if [ -d &quot;$RTAS&quot; ]; then&#13;&#10;    rm -r &quot;$RTAS&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  cp -r &quot;$original&quot; &quot;$RTAS&quot;&#13;&#10;fi&#13;&#10;&#13;&#10;if [ $copyAAX -gt 0 ]; then&#13;&#10;  echo &quot;Copying to AAX folder...&quot;&#13;&#10;&#13;&#10;  if [ -d &quot;/Applications/ProTools_3PDev/Plug-Ins&quot; ]; then&#13;&#10;    AAX1=&quot;/Applications/ProTools_3PDev/Plug-Ins/$PRODUCT_NAME.aaxplugin&quot;&#13;&#10;&#13;&#10;    if [ -d &quot;$AAX1&quot; ]; then&#13;&#10;      rm -r &quot;$AAX1&quot;&#13;&#10;    fi&#13;&#10;&#13;&#10;    cp -r &quot;$original&quot; &quot;$AAX1&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  if [ -d &quot;/Library/Application Support/Avid/Audio/Plug-Ins&quot; ]; then&#13;&#10;    AAX2=&quot;/Library/Application Support/Avid/Audio/Plug-Ins/$PRODUCT_NAME.aaxplugin&quot;&#13;&#10;&#13;&#10;    if [ -d &quot;$AAX2&quot; ]; then&#13;&#10;      rm -r &quot;$AAX2&quot;&#13;&#10;    fi&#13;&#10;&#13;&#10;    cp -r &quot;$original&quot; &quot;$AAX2&quot;&#13;&#10;  fi&#13;&#10;fi&#13;&#10;">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="lkjb_PitchedDelay"
+                       osxSDK="10.5 SDK" osxCompatibility="10.5 SDK" osxArchitecture="32BitUniversal"
+                       libraryPath="$(SRCROOT)/../../Source/DiracLE"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="lkjb_PitchedDelay"
+                       osxSDK="10.5 SDK" osxCompatibility="10.5 SDK" osxArchitecture="64BitUniversal"
+                       libraryPath="$(SRCROOT)/../../Source/DiracLE"/>
+      </CONFIGURATIONS>
+    </XCODE_MAC>
+    <VS2005 targetFolder="Builds/VisualStudio2005" libraryType="1" juceFolder="D:\svn\prog\juceprojects\PitchedDelay\juce\modules">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" isDebug="1"
+                       optimisation="1" targetName="PitchedDelay"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" isDebug="0"
+                       optimisation="2" targetName="PitchedDelay"/>
+      </CONFIGURATIONS>
+    </VS2005>
+    <VS2010 targetFolder="Builds/VisualStudio2010" libraryType="1" juceFolder="D:\svn\prog\juceprojects\PitchedDelay\juce\modules">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="PitchedDelay"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="PitchedDelay"/>
+      </CONFIGURATIONS>
+    </VS2010>
+  </EXPORTFORMATS>
+  <MAINGROUP id="yMj4th" name="PitchedDelay">
+    <GROUP id="{06C179C1-BB6C-EA92-AF9A-F163FD615554}" name="Source">
+      <GROUP id="{68153BFF-4AF0-4FDE-A990-AA9BFB1F2F95}" name="gui">
+        <FILE id="W3StV0" name="DelayGraph.cpp" compile="1" resource="0" file="Source/gui/DelayGraph.cpp"/>
+        <FILE id="KJPUCx" name="DelayGraph.h" compile="0" resource="0" file="Source/gui/DelayGraph.h"/>
+        <FILE id="zppZiY" name="pitcheddelaytab.cpp" compile="1" resource="0"
+              file="Source/gui/pitcheddelaytab.cpp"/>
+        <FILE id="tszmQI" name="pitcheddelaytab.h" compile="0" resource="0"
+              file="Source/gui/pitcheddelaytab.h"/>
+      </GROUP>
+      <GROUP id="{9A517FF3-8EA2-904D-FD47-F8304D62EB26}" name="dsp">
+        <GROUP id="{8E48AAE3-5F19-975C-6CED-D8457CD7F566}" name="DiracLE">
+          <FILE id="tl7p7b" name="diracstatic.cpp" compile="1" resource="0" file="Source/DiracLE/diracstatic.cpp"/>
+          <FILE id="vvmv7W" name="Dirac.h" compile="0" resource="0" file="Source/DiracLE/Dirac.h"/>
+        </GROUP>
+        <FILE id="IL2L8n" name="BandLimit.cpp" compile="1" resource="0" file="Source/dsp/BandLimit.cpp"/>
+        <FILE id="lcZxMN" name="BandLimit.h" compile="0" resource="0" file="Source/dsp/BandLimit.h"/>
+        <FILE id="Qwny9Q" name="basicfilters.h" compile="0" resource="0" file="Source/dsp/basicfilters.h"/>
+        <FILE id="X7hBZs" name="delaytabdsp.cpp" compile="1" resource="0" file="Source/dsp/delaytabdsp.cpp"/>
+        <FILE id="R7dzcG" name="delaytabdsp.h" compile="0" resource="0" file="Source/dsp/delaytabdsp.h"/>
+        <FILE id="xx3z6v" name="PitchBase.h" compile="0" resource="0" file="Source/dsp/PitchBase.h"/>
+        <FILE id="U3H12d" name="pitchdiracle.cpp" compile="1" resource="0"
+              file="Source/dsp/pitchdiracle.cpp"/>
+        <FILE id="aWFPnD" name="pitchdiracle.h" compile="0" resource="0" file="Source/dsp/pitchdiracle.h"/>
+        <FILE id="tr9Xko" name="pitcheddelay.cpp" compile="1" resource="0"
+              file="Source/dsp/pitcheddelay.cpp"/>
+        <FILE id="qAzcMT" name="pitcheddelay.h" compile="0" resource="0" file="Source/dsp/pitcheddelay.h"/>
+        <FILE id="L5CbRu" name="simpledelay.h" compile="0" resource="0" file="Source/dsp/simpledelay.h"/>
+      </GROUP>
+      <FILE id="ApSl4H" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="Mw79dz" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="qCQcjM" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="UaQESV" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_audio" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_DIRECTWRITE="disabled"/>
+</JUCERPROJECT>

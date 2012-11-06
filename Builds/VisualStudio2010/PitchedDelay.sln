@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{D8D8B373-16BA-6519-D2D9-C53FF7553641}") = "PitchedDelay", "PitchedDelay.vcxproj", "{715F5D1C-3C8F-4A4C-07CB-3C7DB866F033}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{715F5D1C-3C8F-4A4C-07CB-3C7DB866F033}.Debug|Win32.ActiveCfg = Debug|Win32
+		{715F5D1C-3C8F-4A4C-07CB-3C7DB866F033}.Debug|Win32.Build.0 = Debug|Win32
+		{715F5D1C-3C8F-4A4C-07CB-3C7DB866F033}.Release|Win32.ActiveCfg = Release|Win32
+		{715F5D1C-3C8F-4A4C-07CB-3C7DB866F033}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
