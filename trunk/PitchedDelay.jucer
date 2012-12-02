@@ -4,7 +4,7 @@
               bundleIdentifier="com.lkjb.PitchedDelay" buildVST="1" buildRTAS="0"
               buildAU="1" pluginName="PitchedDelay" pluginDesc="PitchedDelay"
               pluginManufacturer="Lkjb" pluginManufacturerCode="Lkjb" pluginCode="lkPD"
-              pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="0" pluginWantsMidiIn="0"
+              pluginChannelConfigs="{2, 2}, {1, 1}" pluginIsSynth="0" pluginWantsMidiIn="0"
               pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0" pluginTailLength="0"
               pluginEditorRequiresKeys="1" pluginAUExportPrefix="PitchedDelayAU"
               pluginAUViewClass="PitchedDelayAU_V1" pluginRTASCategory="" jucerVersion="3.0.0"
