@@ -3,6 +3,105 @@
 
 #include "JuceHeader.h"
 
+
+class FirstOrderFilter
+{
+public:
+
+	FirstOrderFilter(float initFreq = 5.f)
+		: sampleRate(44100.f)
+	{
+		setFilter(initFreq, false);
+		clear();
+	}
+
+	void clear()
+	{
+		x1l = 0.f;
+		y1l = 0.f;
+		x1r = 0.f;
+		y1r = 0.f;
+	}
+
+	void setSampleRate(double newSampleRate)
+	{
+		jassert(newSampleRate > 1000 && newSampleRate < 400e3);
+
+		sampleRate = (float) newSampleRate;
+	}
+
+	void setFilter(float freq, bool lowpass)
+	{
+		const float c = (tan(float_Pi * freq / sampleRate) - 1) / (tan(float_Pi * freq / sampleRate) + 1);
+		lowPass = lowpass;
+
+		if (lowPass)
+		{
+			b0 = 0.5f*(1+c);
+			b1 = 0.5f*(1+c);
+		}
+		else
+		{
+			b0 = 0.5f*(1-c);
+			b1 = 0.5f*(c-1);
+		}
+		a1 = c;
+	}
+
+	float process(float in)
+	{
+		float y0 = in*b0 + x1l*b1 - y1l*a1;
+
+		if (y0>-1e-10 && y0<1e-10)
+			y0 = 0;
+
+		y1l = y0;
+		x1l = in;
+
+		return y0;
+	}
+
+	void process(float& inL, float& inR)
+	{
+		float y0l = inL*b0 + x1l*b1 - y1l*a1;
+		float y0r = inR*b0 + x1r*b1 - y1r*a1;
+
+		if (y0l>-1e-10 && y0l<1e-10)
+			y0l = 0;
+
+		if (y0r>-1e-10 && y0r<1e-10)
+			y0r = 0;
+
+		y1l = y0l;
+		x1l = inL;
+		y1r = y0r;
+		x1r = inR;
+	}
+
+	void processBlock(float* data, int numSamples)
+	{
+		for (int i=0; i<numSamples; ++i)
+			data[i] = process(data[i]);
+	}
+
+	void processBlock(float* dataL, float* dataR, int numSamples)
+	{
+		for (int i=0; i<numSamples; ++i)
+			process(dataL[i], dataR[i]);
+	}
+
+private:
+
+	bool lowPass;
+	float sampleRate;
+	float x1l, x1r;
+	float y1l, y1r;
+	float b0;
+	float b1;
+	float a1;
+};
+
+
 class BasicFilters
 {
 public:
@@ -260,8 +359,5 @@ protected:
 	double gain;
 
 };
-
-
-
 
 #endif // __BASICFILTERS__

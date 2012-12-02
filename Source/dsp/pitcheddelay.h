@@ -51,8 +51,6 @@ public:
 	int getNumPitches() { return pitcher.getNumPitches(); }
 	int getCurrentPitch() { return pitcher.getPitchProc(); }
 
-
-
 private:
 
 	void updateLatency(int latency);
@@ -60,6 +58,7 @@ private:
 
 
 	PitchProcessor pitcher;
+	FirstOrderFilter dcBlock;
 
 	double pitch;
 	double sampleRate;

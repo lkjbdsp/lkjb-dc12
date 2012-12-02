@@ -3,48 +3,8 @@
 
 #include "JuceHeader.h"
 #include "PitchBase.h"
+#include "basicfilters.h"
 
-//class DiracWrapper
-//{
-//public:
-//	DiracWrapper()
-//		: dirac(0)
-//	{
-//	}
-//
-//	~DiracWrapper()
-//	{
-//		if (dirac != nullptr)
-//		{
-//			DiracFxDestroy(pitchL);
-//			dirac = nullptr;
-//		}
-//	}
-//
-//	void init(float sampleRate, int quality)
-//	{
-//		if (sampleRate != 44100 || sampleRate != 48000)
-//		{
-//			jassertfalse;
-//			sampleRate = 44100;
-//		}
-//
-//		dirac = DiracFxCreate(quality, sampleRate, 1);
-//		jassert(dirac != nullptr);
-//	}
-//
-//	void processBlock(float* data, int numSamples, float pitch)
-//	{
-//		if (dirac != 0)
-//			DiracFxProcessFloat(1., pitch, &chL, &chL, numSamples, dirac);
-//	}
-//
-//private:
-//
-//	void* dirac;
-//
-//};
-//
 
 class PitchDiracLE : public PitchBase
 {
@@ -82,6 +42,7 @@ private:
 
 	float sampleRate;
 	float pitch;
+	float scale;
 
 	JUCE_DECLARE_NON_COPYABLE(PitchDiracLE);
 

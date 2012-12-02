@@ -63,6 +63,11 @@ public:
     */
     PluginDescription* getType (int index) const noexcept           { return types [index]; }
 
+    /** Type iteration. */
+    PluginDescription** begin() const noexcept                      { return types.begin(); }
+    /** Type iteration. */
+    PluginDescription** end() const noexcept                        { return types.end(); }
+
     /** Looks for a type in the list which comes from this file. */
     PluginDescription* getTypeForFile (const String& fileOrIdentifier) const;
 
@@ -107,6 +112,19 @@ public:
     void scanAndAddDragAndDroppedFiles (AudioPluginFormatManager& formatManager,
                                         const StringArray& filenames,
                                         OwnedArray <PluginDescription>& typesFound);
+
+    //==============================================================================
+    /** Returns the list of blacklisted files. */
+    const StringArray& getBlacklistedFiles() const;
+
+    /** Adds a plugin ID to the black-list. */
+    void addToBlacklist (const String& pluginID);
+
+    /** Removes a plugin ID from the black-list. */
+    void removeFromBlacklist (const String& pluginID);
+
+    /** Clears all the blacklisted files. */
+    void clearBlacklistedFiles();
 
     //==============================================================================
     /** Sort methods used to change the order of the plugins in the list.
@@ -164,6 +182,7 @@ public:
 private:
     //==============================================================================
     OwnedArray <PluginDescription> types;
+    StringArray blacklist;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (KnownPluginList);
 };
