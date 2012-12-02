@@ -54,7 +54,7 @@
     If you're not interested in VSTs, you can disable them by setting the
     JUCE_PLUGINHOST_VST flag to 0.
 */
-#include <pluginterfaces/vst2.x/aeffectx.h>
+#include "pluginterfaces/vst2.x/aeffectx.h"
 
 #if JUCE_MSVC
  #pragma warning (pop)
@@ -713,12 +713,12 @@ class VSTPluginInstance     : public AudioPluginInstance,
 public:
     VSTPluginInstance (const ModuleHandle::Ptr& module_)
         : effect (nullptr),
+          module (module_),
           name (module_->pluginName),
           wantsMidiMessages (false),
           initialised (false),
           isPowerOn (false),
-          tempBuffer (1, 1),
-          module (module_)
+          tempBuffer (1, 1)
     {
         try
         {
@@ -902,7 +902,7 @@ public:
         vstHostTime.timeSigDenominator = 4;
         vstHostTime.sampleRate = rate;
         vstHostTime.samplePos = 0;
-        vstHostTime.flags = kVstNanosValid;  /*| kVstTransportPlaying | kVstTempoValid | kVstTimeSigValid*/;
+        vstHostTime.flags = kVstNanosValid | kVstAutomationWriting | kVstAutomationReading;
 
         initialise();
 
@@ -973,10 +973,48 @@ public:
                 vstHostTime.barStartPos        = position.ppqPositionOfLastBarStart;
                 vstHostTime.flags |= kVstTempoValid | kVstTimeSigValid | kVstPpqPosValid | kVstBarsValid;
 
-                if (position.isPlaying)
-                    vstHostTime.flags |= kVstTransportPlaying;
+                VstInt32 newTransportFlags = 0;
+                if (position.isPlaying)     newTransportFlags |= kVstTransportPlaying;
+                if (position.isRecording)   newTransportFlags |= kVstTransportRecording;
+
+                if (newTransportFlags != (vstHostTime.flags & (kVstTransportPlaying | kVstTransportRecording)))
+                    vstHostTime.flags = (vstHostTime.flags & ~(kVstTransportPlaying | kVstTransportRecording)) | newTransportFlags | kVstTransportChanged;
                 else
-                    vstHostTime.flags &= ~kVstTransportPlaying;
+                    vstHostTime.flags &= ~kVstTransportChanged;
+
+                switch (position.frameRate)
+                {
+                    case AudioPlayHead::fps24:
+                        vstHostTime.smpteFrameRate = 0;
+                        vstHostTime.smpteOffset = (long) (position.timeInSeconds * 80 * 24 + 0.5);
+                        vstHostTime.flags |= kVstSmpteValid;
+                        break;
+
+                    case AudioPlayHead::fps25:
+                        vstHostTime.smpteFrameRate = 1;
+                        vstHostTime.smpteOffset = (long) (position.timeInSeconds * 80 * 25 + 0.5);
+                        vstHostTime.flags |= kVstSmpteValid;
+                        break;
+
+                    case AudioPlayHead::fps30:
+                        vstHostTime.smpteFrameRate = 3;
+                        vstHostTime.smpteOffset = (long) (position.timeInSeconds * 80 * 30 + 0.5);
+                        vstHostTime.flags |= kVstSmpteValid;
+                        break;
+
+                    default: break;
+                }
+
+                if (position.isLooping)
+                {
+                    vstHostTime.cycleStartPos = position.ppqLoopStart;
+                    vstHostTime.cycleEndPos = position.ppqLoopEnd;
+                    vstHostTime.flags |= kVstCyclePosValid;
+                }
+                else
+                {
+                    vstHostTime.flags &= ~kVstCyclePosValid;
+                }
             }
 
             vstHostTime.nanoSeconds = getVSTHostTimeNanoseconds();
@@ -1456,7 +1494,7 @@ public:
                     if (i != oldProg)
                     {
                         const fxProgram* const prog = (const fxProgram*) (((const char*) (set->programs)) + i * progLen);
-                        if (((const char*) prog) - ((const char*) set) >= dataSize)
+                        if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
                             return false;
 
                         if (vst_swap (set->numPrograms) > 0)
@@ -1471,7 +1509,7 @@ public:
                     setCurrentProgram (oldProg);
 
                 const fxProgram* const prog = (const fxProgram*) (((const char*) (set->programs)) + oldProg * progLen);
-                if (((const char*) prog) - ((const char*) set) >= dataSize)
+                if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
                     return false;
 
                 if (! restoreProgramSettings (prog))
@@ -1819,16 +1857,19 @@ private:
 
         if (v != 0)
         {
-            int versionBits[4];
+            int versionBits[32];
             int n = 0;
 
             while (v != 0)
             {
-                versionBits [n++] = (v & 0xff);
-                v >>= 8;
+                versionBits [n++] = v % 10;
+                v /= 10;
             }
 
             s << 'V';
+
+            while (n > 1 && versionBits [n - 1] == 0)
+                --n;
 
             while (n > 0)
             {
@@ -2838,13 +2879,19 @@ FileSearchPath VSTPluginFormat::getDefaultLocationsToSearch()
 {
    #if JUCE_MAC
     return FileSearchPath ("~/Library/Audio/Plug-Ins/VST;/Library/Audio/Plug-Ins/VST");
+   #elif JUCE_LINUX
+    return FileSearchPath ("/usr/lib/vst");
    #elif JUCE_WINDOWS
     const String programFiles (File::getSpecialLocation (File::globalApplicationsDirectory).getFullPathName());
 
-    return FileSearchPath (WindowsRegistry::getValue ("HKLM\\Software\\VST\\VSTPluginsPath",
-                                                      programFiles + "\\Steinberg\\VstPlugins"));
-   #elif JUCE_LINUX
-    return FileSearchPath ("/usr/lib/vst");
+    FileSearchPath paths;
+    paths.add (WindowsRegistry::getValue ("HKLM\\Software\\VST\\VSTPluginsPath",
+                                          programFiles + "\\Steinberg\\VstPlugins"));
+    paths.removeNonExistentPaths();
+
+    paths.add (WindowsRegistry::getValue ("HKLM\\Software\\VST\\VSTPluginsPath",
+                                          programFiles + "\\VstPlugins"));
+    return paths;
    #endif
 }
 

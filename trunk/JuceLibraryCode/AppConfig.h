@@ -179,10 +179,10 @@
  #define JucePlugin_Desc                   "PitchedDelay"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "lkjb"
+ #define JucePlugin_Manufacturer           "Lkjb"
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       'lkjb'
+ #define JucePlugin_ManufacturerCode       'Lkjb'
 #endif
 #ifndef  JucePlugin_PluginCode
  #define JucePlugin_PluginCode             'lkPD'
@@ -214,14 +214,11 @@
 #ifndef  JucePlugin_EditorRequiresKeyboardFocus
  #define JucePlugin_EditorRequiresKeyboardFocus  1
 #endif
-#ifndef  JucePlugin_Version
- #define JucePlugin_Version                1.0.0
-#endif
 #ifndef  JucePlugin_VersionCode
- #define JucePlugin_VersionCode            0x10000
+ #define JucePlugin_VersionCode            0x10002
 #endif
 #ifndef  JucePlugin_VersionString
- #define JucePlugin_VersionString          "1.0.0"
+ #define JucePlugin_VersionString          "1.0.2"
 #endif
 #ifndef  JucePlugin_VSTUniqueID
  #define JucePlugin_VSTUniqueID            JucePlugin_PluginCode
@@ -262,9 +259,6 @@
 #ifndef  JucePlugin_RTASDisableBypass
  #define JucePlugin_RTASDisableBypass      0
 #endif
-#ifndef  JucePlugin_RTASDisableMultiMono
- #define JucePlugin_RTASDisableMultiMono   0
-#endif
 #ifndef  JucePlugin_AAXIdentifier
  #define JucePlugin_AAXIdentifier          com.yourcompany.PitchedDelay
 #endif
@@ -279,9 +273,6 @@
 #endif
 #ifndef  JucePlugin_AAXCategory
  #define JucePlugin_AAXCategory            AAX_ePlugInCategory_Dynamics
-#endif
-#ifndef  JucePlugin_AAXDisableBypass
- #define JucePlugin_AAXDisableBypass       0
 #endif
 
 #endif  // __JUCE_APPCONFIG_JH7QDM__

@@ -45,6 +45,7 @@ void PitchedDelay::prepareToPlay(double samplerate, int blockSize)
 	sampleRate = samplerate;
 
 	pitcher.prepareToPlay(sampleRate, blockSize);
+	dcBlock.setSampleRate(sampleRate);
 
 	latency = pitcher.getLatency();
 
@@ -156,6 +157,7 @@ void PitchedDelay::processBlock(float* data, int numSamples)
 
 			lastDataL[i] = data[i];
 		}
+		dcBlock.processBlock(lastDataL, numSamples);
 	}
 	else
 	{
@@ -184,7 +186,9 @@ void PitchedDelay::processBlock(float* data, int numSamples)
 				data[i] = 0;
 
 			lastDataL[i] = data[i];
+			jassert(fabs(data[i]) < 1e3);
 		}
+		dcBlock.processBlock(lastDataL, numSamples);
 	}
 }
 
@@ -255,6 +259,7 @@ void PitchedDelay::processBlock(float* dataL, float* dataR, int numSamples)
 				lastDataR[i] = dataR[i];
 			}
 		}
+		dcBlock.processBlock(lastDataL, lastDataR, numSamples);
 	}
 	else // ! preDelayPitch
 	{
@@ -326,6 +331,7 @@ void PitchedDelay::processBlock(float* dataL, float* dataR, int numSamples)
 				lastDataR[i] = dataR[i];
 			}
 		}
+		dcBlock.processBlock(lastDataL, lastDataR, numSamples);
 	}
 }
 

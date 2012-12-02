@@ -512,8 +512,19 @@ int FileOutputStream::writeInternal (const void* const data, const int numBytes)
 void FileOutputStream::flushInternal()
 {
     if (fileHandle != 0)
+    {
         if (fsync (getFD (fileHandle)) == -1)
             status = getResultForErrno();
+
+       #if JUCE_ANDROID
+        // This stuff tells the OS to asynchronously update the metadata
+        // that the OS has cached aboud the file - this metadata is used
+        // when the device is acting as a USB drive, and unless it's explicitly
+        // refreshed, it'll get out of step with the real file.
+        const LocalRef<jstring> t (javaString (file.getFullPathName()));
+        android.activity.callVoidMethod (JuceAppActivity.scanFile, t.get());
+       #endif
+    }
 }
 
 Result FileOutputStream::truncate()
@@ -528,9 +539,7 @@ Result FileOutputStream::truncate()
 //==============================================================================
 String SystemStats::getEnvironmentVariable (const String& name, const String& defaultValue)
 {
-    const char* s = ::getenv (name.toUTF8());
-
-    if (s != nullptr)
+    if (const char* s = ::getenv (name.toUTF8()))
         return String::fromUTF8 (s);
 
     return defaultValue;
@@ -1042,6 +1051,10 @@ public:
     int read (void* const dest, const int numBytes)
     {
         jassert (dest != nullptr);
+
+        #ifdef fdopen
+         #error // the zlib headers define this function as NULL!
+        #endif
 
         if (readHandle == 0 && childPID != 0)
             readHandle = fdopen (pipeHandle, "r");

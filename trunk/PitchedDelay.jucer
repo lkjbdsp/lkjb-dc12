@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.0.0"
+<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.0.2"
               bundleIdentifier="com.lkjb.PitchedDelay" buildVST="1" buildRTAS="0"
               buildAU="1" pluginName="PitchedDelay" pluginDesc="PitchedDelay"
-              pluginManufacturer="lkjb" pluginManufacturerCode="lkjb" pluginCode="lkPD"
+              pluginManufacturer="Lkjb" pluginManufacturerCode="Lkjb" pluginCode="lkPD"
               pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="0" pluginWantsMidiIn="0"
               pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0" pluginTailLength="0"
               pluginEditorRequiresKeys="1" pluginAUExportPrefix="PitchedDelayAU"

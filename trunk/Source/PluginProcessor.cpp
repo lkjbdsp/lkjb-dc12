@@ -205,12 +205,11 @@ void PitchedDelayAudioProcessor::setCurrentProgram (int index)
 {
 	const int sync = index - 1;
 
-	if (index >= 0)
+	if (sync >= 0)
 	{
 		for (int i=0; i<delays.size(); ++i)
 			delays.getUnchecked(i)->setParam(DelayTabDsp::kSync, (double) sync);
 	}
-
 }
 
 const String PitchedDelayAudioProcessor::getProgramName (int index)
