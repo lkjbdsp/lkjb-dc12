@@ -194,7 +194,7 @@
  #define JucePlugin_MaxNumOutputChannels   2
 #endif
 #ifndef  JucePlugin_PreferredChannelConfigurations
- #define JucePlugin_PreferredChannelConfigurations  {1, 1}, {2, 2}
+ #define JucePlugin_PreferredChannelConfigurations  {2, 2}, {1, 1}
 #endif
 #ifndef  JucePlugin_IsSynth
  #define JucePlugin_IsSynth                0
@@ -213,6 +213,9 @@
 #endif
 #ifndef  JucePlugin_EditorRequiresKeyboardFocus
  #define JucePlugin_EditorRequiresKeyboardFocus  1
+#endif
+#ifndef  JucePlugin_Version
+ #define JucePlugin_Version                1.0.2
 #endif
 #ifndef  JucePlugin_VersionCode
  #define JucePlugin_VersionCode            0x10002
@@ -259,6 +262,9 @@
 #ifndef  JucePlugin_RTASDisableBypass
  #define JucePlugin_RTASDisableBypass      0
 #endif
+#ifndef  JucePlugin_RTASDisableMultiMono
+ #define JucePlugin_RTASDisableMultiMono   0
+#endif
 #ifndef  JucePlugin_AAXIdentifier
  #define JucePlugin_AAXIdentifier          com.yourcompany.PitchedDelay
 #endif
@@ -273,6 +279,9 @@
 #endif
 #ifndef  JucePlugin_AAXCategory
  #define JucePlugin_AAXCategory            AAX_ePlugInCategory_Dynamics
+#endif
+#ifndef  JucePlugin_AAXDisableBypass
+ #define JucePlugin_AAXDisableBypass       0
 #endif
 
 #endif  // __JUCE_APPCONFIG_JH7QDM__
