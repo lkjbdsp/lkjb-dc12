@@ -91,7 +91,7 @@ void PitchedDelay::setDelay(double time, bool prePitch)
 	const int latency = pitcher.getLatency();
 
 	const int delaySamplesPrePitch = jlimit(0, delayL.getDataLength(), int(time*sampleRate));
-	const int delaySamples = preDelayPitch ? delaySamplesPrePitch : int(delayRange.clipValue(time)*sampleRate) - latency;
+	const int delaySamples = jmax(0, preDelayPitch ? delaySamplesPrePitch : int(delayRange.clipValue(time)*sampleRate) - latency);
 
 	delayL.setDelaySamples(delaySamples);
 	delayR.setDelaySamples(delaySamples);

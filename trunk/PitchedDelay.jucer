@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.0.2"
+<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.1.0"
               bundleIdentifier="com.lkjb.PitchedDelay" buildVST="1" buildRTAS="0"
               buildAU="1" pluginName="PitchedDelay" pluginDesc="PitchedDelay"
               pluginManufacturer="Lkjb" pluginManufacturerCode="Lkjb" pluginCode="lkPD"
@@ -84,6 +84,9 @@
       <FILE id="qCQcjM" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="UaQESV" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="X5zGYU" name="presetmanager.h" compile="0" resource="0" file="Source/presetmanager.h"/>
+      <FILE id="NkDSZT" name="factorypresets.xml" compile="0" resource="1"
+            file="Source/factorypresets.xml"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  27 Oct 2012 3:10:07pm
+  Creation date:  30 Dec 2012 2:48:43pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -54,7 +54,9 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
       cbPitch (0),
       tbMono (0),
       tbStereo (0),
-      tbPingpong (0)
+      tbPingpong (0),
+      lPan (0),
+      sPan (0)
 {
 	addAndMakeVisible (sDelay = new Slider (L"DelaySlider"));
  sDelay->setTooltip (L"Delay time");
@@ -236,6 +238,20 @@ PitchedDelayTab::PitchedDelayTab (PitchedDelayAudioProcessor* processor, int del
  tbPingpong->setRadioGroupId (5000);
  tbPingpong->addListener (this);
 
+ addAndMakeVisible (lPan = new Label (L"Pan/Balance Label",
+                                      L"Pan\n"));
+ lPan->setFont (Font (15.0000f, Font::plain));
+ lPan->setJustificationType (Justification::centredRight);
+ lPan->setEditable (false, false, false);
+ lPan->setColour (TextEditor::textColourId, Colours::black);
+ lPan->setColour (TextEditor::backgroundColourId, Colour (0x0));
+
+ addAndMakeVisible (sPan = new Slider (L"pan slider"));
+ sPan->setRange (-100, 100, 1);
+ sPan->setSliderStyle (Slider::LinearHorizontal);
+ sPan->setTextBoxStyle (Slider::TextBoxRight, false, 60, 20);
+ sPan->addListener (this);
+
 
  //[UserPreSize]
  for (int i=0; i<DelayTabDsp::kNumParameters; ++i)
@@ -295,6 +311,8 @@ PitchedDelayTab::~PitchedDelayTab()
  deleteAndZero (tbMono);
  deleteAndZero (tbStereo);
  deleteAndZero (tbPingpong);
+ deleteAndZero (lPan);
+ deleteAndZero (sPan);
 
 
 	//[Destructor]. You can add your own custom destruction code here..
@@ -348,12 +366,14 @@ void PitchedDelayTab::resized()
     sGain->setBounds (110, 170, getWidth() - 250, 20);
     label7->setBounds (5, 170, 100, 20);
     tbEnable->setBounds (10, 2, 100, 20);
-    sVolume->setBounds (getWidth() - 390, 220, 380, 20);
-    label8->setBounds (getWidth() - 55, 200, 50, 20);
+    sVolume->setBounds (getWidth() - 390, 240, 380, 20);
+    label8->setBounds (getWidth() - 60, 220, 50, 20);
     cbPitch->setBounds (5, 55, 100, 20);
-    tbMono->setBounds (10, 200, 150, 20);
-    tbStereo->setBounds (10, 220, 150, 20);
-    tbPingpong->setBounds (10, 240, 150, 20);
+    tbMono->setBounds (10, 200, 100, 20);
+    tbStereo->setBounds (10, 220, 100, 20);
+    tbPingpong->setBounds (10, 240, 100, 20);
+    lPan->setBounds (110, 200, 80, 20);
+    sPan->setBounds (210, 200, 150, 20);
     internalPath1.clear();
     internalPath1.startNewSubPath (4.0f, 53.0f);
     internalPath1.lineTo ((float) (getWidth() - 4), 53.0f);
@@ -414,6 +434,12 @@ void PitchedDelayTab::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_sVolume] -- add your slider handling code here..
 			sendActionMessage("Tab" + String(delayIndex) + ":Volume:" + String(sVolume->getValue()));
         //[/UserSliderCode_sVolume]
+    }
+    else if (sliderThatWasMoved == sPan)
+    {
+        //[UserSliderCode_sPan] -- add your slider handling code here..
+			sendActionMessage("Tab" + String(delayIndex) + ":Pan:" + String(sPan->getValue()));
+        //[/UserSliderCode_sPan]
     }
 
     //[UsersliderValueChanged_Post]
@@ -704,6 +730,14 @@ void PitchedDelayTab::timerCallback()
 			setParam(i, value);
 	}
 
+	{
+		const String curPan(lPan->getText());
+		const String shouldPan(tbMono->getToggleState() ? "Pan" : tbStereo->getToggleState() ? "Out Balance" : "In Balance");
+
+		if (curPan != shouldPan)
+			lPan->setText(shouldPan, false);
+	}
+
 	updateBPM();
 }
 
@@ -760,6 +794,9 @@ void PitchedDelayTab::setParam(int index, double value)
 
 		case DelayTabDsp::kVolume:
 			sVolume->setValue(value, dontSendNotification);
+			break;
+		case DelayTabDsp::kPan:
+			sPan->setValue(value, dontSendNotification);
 			break;
 
 		case DelayTabDsp::kEnabled:
@@ -872,11 +909,11 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="10 2 100 20" buttonText="Enabled"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <SLIDER name="VolumeSlider" id="49c1442c53da8c6" memberName="sVolume"
-          virtualName="" explicitFocusOrder="0" pos="390R 220 380 20" tooltip="Delay tab volume"
+          virtualName="" explicitFocusOrder="0" pos="390R 240 380 20" tooltip="Delay tab volume"
           min="-60" max="0" int="0.1" style="LinearHorizontal" textBoxPos="TextBoxRight"
           textBoxEditable="1" textBoxWidth="50" textBoxHeight="20" skewFactor="1"/>
   <LABEL name="new label" id="96d82c82b9fd34ab" memberName="label8" virtualName=""
-         explicitFocusOrder="0" pos="55R 200 50 20" edTextCol="ff000000"
+         explicitFocusOrder="0" pos="60R 220 50 20" edTextCol="ff000000"
          edBkgCol="0" labelText="Volume" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>
@@ -884,17 +921,26 @@ BEGIN_JUCER_METADATA
             virtualName="" explicitFocusOrder="0" pos="5 55 100 20" tooltip="Pitch shfiting algorithm. Off Disables pitching and saves resources."
             editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <TOGGLEBUTTON name="MonoTogglebutton" id="e91f6a5333e004fa" memberName="tbMono"
-                virtualName="" explicitFocusOrder="0" pos="10 200 150 20" tooltip="Mono (mid) delay"
+                virtualName="" explicitFocusOrder="0" pos="10 200 100 20" tooltip="Mono (mid) delay"
                 buttonText="Mono" connectedEdges="0" needsCallback="1" radioGroupId="5000"
                 state="1"/>
   <TOGGLEBUTTON name="StereoTogglebutton" id="698c74213e7fdc29" memberName="tbStereo"
-                virtualName="" explicitFocusOrder="0" pos="10 220 150 20" tooltip="Stereo delay"
+                virtualName="" explicitFocusOrder="0" pos="10 220 100 20" tooltip="Stereo delay"
                 buttonText="Stereo" connectedEdges="0" needsCallback="1" radioGroupId="5000"
                 state="0"/>
   <TOGGLEBUTTON name="PingpongTogglebutton" id="bd9a88eca85f4957" memberName="tbPingpong"
-                virtualName="" explicitFocusOrder="0" pos="10 240 150 20" tooltip="Stereo pingpong delay"
+                virtualName="" explicitFocusOrder="0" pos="10 240 100 20" tooltip="Stereo pingpong delay"
                 buttonText="Pingpong" connectedEdges="0" needsCallback="1" radioGroupId="5000"
                 state="0"/>
+  <LABEL name="Pan/Balance Label" id="71b4933fb7d2eb20" memberName="lPan"
+         virtualName="" explicitFocusOrder="0" pos="110 200 80 20" edTextCol="ff000000"
+         edBkgCol="0" labelText="Pan&#10;" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         bold="0" italic="0" justification="34"/>
+  <SLIDER name="pan slider" id="749823034ff76ead" memberName="sPan" virtualName=""
+          explicitFocusOrder="0" pos="210 200 150 20" min="-100" max="100"
+          int="1" style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
+          textBoxWidth="60" textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -20,8 +20,8 @@ public:
 		kPitch,
 		kSync,
 		kPitchType,
-		kDelay,
 		kPrePitch,
+		kDelay,
 		kFeedback,
 		
 		kFilterType,
@@ -29,10 +29,10 @@ public:
 		kFilterQ, 
 		kFilterGain,
 
-
 		kMode,
 
 		kVolume,
+		kPan,
 
 		kEnabled,
 
@@ -87,6 +87,7 @@ private:
 
 	double volume;
 	float volumeLin;
+	float panning;
 
 	bool enabled;
 

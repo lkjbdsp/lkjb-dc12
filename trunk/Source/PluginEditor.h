@@ -16,6 +16,8 @@
 #include "gui/pitcheddelaytab.h"
 #include "gui/DelayGraph.h"
 
+#include "presetmanager.h"
+
 class PitchedDelayLookAndFeel : public LookAndFeel
 {
 public:
@@ -62,10 +64,11 @@ private:
 
 
 class PitchedDelayAudioProcessorEditor  : public AudioProcessorEditor,
-																					public Timer,
-																					public ActionListener,
-																					public Slider::Listener,
-																					public Button::Listener
+                                          public Timer,
+                                          public ActionListener,
+                                          public Slider::Listener,
+                                          public Button::Listener,
+										  public ComboBox::Listener
 {
 public:
   PitchedDelayAudioProcessorEditor (PitchedDelayAudioProcessor* ownerFilter);
@@ -77,18 +80,19 @@ public:
 	void resized();
 
 	void timerCallback();
-  void actionListenerCallback (const String& message);
+	void actionListenerCallback (const String& message);
 	void sliderValueChanged (Slider* slider);
 	void buttonClicked (Button* button);
-
+	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 
 private:
 
+	void updatePresets();
+	
 	PitchedDelayAudioProcessor* getProcessor()
 	{
 		return static_cast<PitchedDelayAudioProcessor*> (getAudioProcessor());
 	}
-
 
 	CallbackTab tabs;
 	OwnedArray<PitchedDelayTab> delays;
@@ -102,7 +106,11 @@ private:
 	PitchedDelayLookAndFeel lookAndFeel;
 
 	ScopedPointer<TooltipWindow> tooltipWindow;
+	ScopedPointer<PresetManager> presetManager;
 
+	TextButton addPreset;
+	TextButton removePreset;
+	ComboBox presetList;
 };
 
 
