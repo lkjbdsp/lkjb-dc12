@@ -157,6 +157,17 @@
         <File RelativePath="..\..\Source\PluginProcessor.h"/>
         <File RelativePath="..\..\Source\PluginEditor.cpp"/>
         <File RelativePath="..\..\Source\PluginEditor.h"/>
+        <File RelativePath="..\..\Source\presetmanager.h"/>
+        <File RelativePath="..\..\Source\factorypresets.xml">
+          <FileConfiguration Name="Debug|Win32"
+                             ExcludedFromBuild="true">
+            <Tool Name="VCCLCompilerTool"/>
+          </FileConfiguration>
+          <FileConfiguration Name="Release|Win32"
+                             ExcludedFromBuild="true">
+            <Tool Name="VCCLCompilerTool"/>
+          </FileConfiguration>
+        </File>
       </Filter>
     </Filter>
     <Filter Name="Juce Modules">
@@ -4193,6 +4204,8 @@
     </Filter>
     <Filter Name="Juce Library Code">
       <File RelativePath="..\..\JuceLibraryCode\AppConfig.h"/>
+      <File RelativePath="..\..\JuceLibraryCode\BinaryData.cpp"/>
+      <File RelativePath="..\..\JuceLibraryCode\BinaryData.h"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_plugin_client\AAX\juce_AAX_Wrapper.cpp"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_audio_basics.cpp"/>
       <File RelativePath="..\..\JuceLibraryCode\modules\juce_audio_devices\juce_audio_devices.cpp"/>

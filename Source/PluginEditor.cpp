@@ -15,7 +15,9 @@
 //==============================================================================
 PitchedDelayAudioProcessorEditor::PitchedDelayAudioProcessorEditor (PitchedDelayAudioProcessor* ownerFilter)
   : AudioProcessorEditor (ownerFilter),
-		tabs(TabbedButtonBar::TabsAtTop, ownerFilter)
+    tabs(TabbedButtonBar::TabsAtTop, ownerFilter),
+	addPreset("+", "Add new preset"),
+	removePreset("-", "Remove current preset from list")
 {
 	LookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
 
@@ -49,9 +51,30 @@ PitchedDelayAudioProcessorEditor::PitchedDelayAudioProcessorEditor (PitchedDelay
 	showTooltips.setButtonText("Show tooltips");
 	showTooltips.addListener(this);
 
+	addAndMakeVisible(&addPreset);
+	addPreset.addListener(this);
+	addAndMakeVisible(&removePreset);
+	removePreset.addListener(this);
+
+	addAndMakeVisible(&presetList);
+	presetList.addListener(this);
+
 	tooltipWindow = new TooltipWindow();
 
-	setSize (600, 390);
+	{
+		File presetFile(File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("lkjb").getChildFile("PitchedDelay").getChildFile("presets.xml"));
+
+		if (! presetFile.existsAsFile())
+		{
+			presetFile.getParentDirectory().createDirectory();
+			presetFile.replaceWithText(String(BinaryData::factorypresets_xml, BinaryData::factorypresets_xmlSize));
+		}
+
+		presetManager = new PresetManager(ownerFilter, presetFile);
+		updatePresets();
+	}
+
+	setSize (600, 410);
 
 	startTimer(100);
 }
@@ -61,24 +84,29 @@ PitchedDelayAudioProcessorEditor::~PitchedDelayAudioProcessorEditor()
 
 }
 
-
 void PitchedDelayAudioProcessorEditor::resized()
 {
-	graph->setBounds(0, 0, 600, 100);
-	tabs.setBounds(0, 100, 500, 380);
-	dryVolume.setBounds(502, 120, 46, 245);
-	masterVolume.setBounds(552, 120, 46, 245);
-	showTooltips.setBounds(502, 370, 96, 20);
+	addPreset.setBounds(getWidth() - 60, 0, 30, 20);
+	removePreset.setBounds(getWidth() - 30, 0, 30, 20);
+	presetList.setBounds(getWidth() - 360, 0, 300, 20);
+
+	graph->setBounds(0, 20, 600, 100);
+	tabs.setBounds(0, 120, 500, 380);
+	dryVolume.setBounds(502, 140, 46, 265);
+	masterVolume.setBounds(552, 140, 46, 265);
+	showTooltips.setBounds(10, 0, 100, 20);
 }
 
 //==============================================================================
 void PitchedDelayAudioProcessorEditor::paint (Graphics& g)
 {
-  g.fillAll (Colour(0xFFB0B0B0));
+	g.fillAll (Colour(0xFFB0B0B0));
 	g.setFont(Font(14.f));
 	g.setColour(Colours::black);
-	g.drawText("Dry", 500, 100, 50, 20, Justification::centred, false);
-	g.drawText("Master", 550, 100, 50, 20, Justification::centred, false);
+	g.drawText("Dry", 500, 120, 50, 20, Justification::centred, false);
+	g.drawText("Master", 550, 120, 50, 20, Justification::centred, false);
+
+	g.drawText("Presets", 0, 0, getWidth()-370, 20, Justification::centredRight, false);
 }
 
 void PitchedDelayAudioProcessorEditor::timerCallback()
@@ -100,6 +128,12 @@ void PitchedDelayAudioProcessorEditor::timerCallback()
 		tooltipWindow = new TooltipWindow();
 	else if (! Proc->showTooltips && tooltipWindow != nullptr)
 		tooltipWindow = 0;
+
+	for (int i=0; i<tabs.getNumTabs(); ++i)
+	{
+		const String tabName(String(Proc->getDelay(i)->isEnabled() ? "*" : "") + "Delay Tap " + String(i+1));
+		tabs.setTabName(i, tabName);
+	}
 }
 
 void PitchedDelayAudioProcessorEditor::actionListenerCallback(const String& message)
@@ -158,6 +192,10 @@ void PitchedDelayAudioProcessorEditor::actionListenerCallback(const String& mess
 		{
 			paramIdx = DelayTabDsp::kVolume;
 		}
+		else if (param == "Pan")
+		{
+			paramIdx = DelayTabDsp::kPan;
+		}
 		else if (param == "EqType")
 		{
 			paramIdx = DelayTabDsp::kFilterType;
@@ -208,4 +246,68 @@ void PitchedDelayAudioProcessorEditor::buttonClicked (Button* button)
 	{
 		getProcessor()->showTooltips = showTooltips.getToggleState();
 	}
+	else if (button == &addPreset)
+	{
+		AlertWindow aw("Add Preset", "Add preset", AlertWindow::QuestionIcon, this);
+		aw.addTextEditor("name", presetList.getText(), "Preset name");
+		aw.addButton("OK", 1, KeyPress(KeyPress::returnKey));
+		aw.addButton("Cancel", 2, KeyPress(KeyPress::escapeKey));
+
+		if (aw.runModalLoop() == 1)
+		{
+			const String presetName(aw.getTextEditor("name")->getText());
+			StringArray presetNames(presetManager->getPresetNames());
+			
+			if (presetName.isEmpty())
+			{
+				AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Invalid name", "No Preset name specified", "OK");
+				return;
+			}
+
+			if (presetNames.contains(presetName))
+			{
+				if (! AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Overwrite Preset", "Overwrite " + presetName.quoted() + "?", "Overwrite", "Cancel", this))
+					return;
+			}
+
+			presetManager->storePreset(presetName);
+
+			updatePresets();
+		}
+	}
+	else if (button == &removePreset)
+	{
+		const String presetName(presetList.getText());
+
+		if (presetName.isEmpty())
+			return;
+
+		if (! AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Remove Preset", "Remove " + presetName.quoted() + "?", "Remove", "Cancel", this))
+			return;
+
+		presetManager->removePreset(presetName, true);
+		updatePresets();
+	}
+}
+
+void PitchedDelayAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+	if (comboBoxThatHasChanged == &presetList)
+	{
+		const String presetName(presetList.getText());
+		presetManager->loadPreset(presetName);		
+	}
+}
+
+void PitchedDelayAudioProcessorEditor::updatePresets()
+{
+	StringArray presets(presetManager->getPresetNames());
+	presets.sort(true);
+
+	presetList.clear();
+
+	for (int i=0; i<presets.size(); ++i)
+		presetList.addItem(presets[i], i+1);
+
+	presetList.setSelectedId(0);
 }

@@ -5,6 +5,8 @@
 DelayTabDsp::DelayTabDsp(const String& id)
 : Parameters(id),
 	volume(0),
+	volumeLin(1.f),
+	panning(0.f),
 	enabled(false),
 	mode(kMono),
 	sync(0),
@@ -13,8 +15,8 @@ DelayTabDsp::DelayTabDsp(const String& id)
 	addParameter(kPitch, "Pitch", -12, 12, 0, 0);
 	addParameter(kSync, "Sync", 0, 7, 0, 0);
 	addParameter(kPitchType, "PitchType", 0, (int) delay.getNumPitches() + 1, 0, 0);
-	addParameter(kDelay, "Delay", 0, MAXDELAYSECONDS, 0, MAXDELAYSECONDS/2);
 	addParameter(kPrePitch, "PrePitch", 0, 1, 0, 0);
+	addParameter(kDelay, "Delay", 0, MAXDELAYSECONDS, 0, MAXDELAYSECONDS/2);
 	addParameter(kFeedback, "Feedback", 0, 100, 0, 0);
 
 	addParameter(kFilterType, "EQ-Type", 0, 7, 0, 0);
@@ -25,6 +27,7 @@ DelayTabDsp::DelayTabDsp(const String& id)
 	addParameter(kMode, "Mode", 0, (double) kNumModes - 1, 0, 0);
 
 	addParameter(kVolume, "Volume", -60, 0, 0, 0);
+	addParameter(kPan, "Pan", -100, 100, 1, 0);
 
 	addParameter(kEnabled, "Enabled", 0, 1, 0, 0);
 
@@ -76,6 +79,9 @@ void DelayTabDsp::setParam(int index, double val)
 	case kVolume:
 		volume = val;
 		volumeLin = pow(10.f, (float) volume/20.f);
+		break;
+	case kPan:
+		panning = (float) val;
 		break;
 
 	case kEnabled:
@@ -136,6 +142,10 @@ double DelayTabDsp::getParam(int index)
 	case kVolume:
 		tmp = volume;
 		break;
+	case kPan:
+		tmp = panning;
+		break;
+
 	case kEnabled:
 		tmp = enabled ? 1 : 0;
 		break;
@@ -193,6 +203,9 @@ void DelayTabDsp::processBlock(const float* inL, const float* inR, int numSample
 
 void DelayTabDsp::processMono(const float* inL, const float* inR, int numSamples)
 {
+	const float gainLeft = cos(float_Pi * (panning + 100.f)/400.f) * sqrt(2.f);
+	const float gainRight = sin(float_Pi * (panning + 100.f)/400.f) * sqrt(2.f);
+
 	for (int i=0; i<numSamples; ++i)
 		dataL[i] = 0.5f * (inL[i] + inR[i]);
 
@@ -200,26 +213,33 @@ void DelayTabDsp::processMono(const float* inL, const float* inR, int numSamples
 
 	for (int i=0; i<numSamples; ++i)
 	{
-		dataL[i] *= volumeLin;
-		dataR[i] = dataL[i];
+		const float x = dataL[i] * volumeLin;
+		dataL[i] = x * gainLeft;
+		dataR[i] = x * gainRight;
 	}
 }
 
 void DelayTabDsp::processStereo(const float* inL, const float* inR, int numSamples)
 {
+	const bool pingPong = delay.getPingPong();
+	const float inGainL = pingPong && panning > 0 ? 1.f - panning/ 100.f : 1.f;
+	const float inGainR = pingPong && panning < 0 ? 1.f - (-panning)/ 100.f : 1.f;
+
+	const float outGainL = ! pingPong && panning > 0 ? 1.f - panning/ 100.f : 1.f;
+	const float outGainR = ! pingPong && panning < 0 ? 1.f - (-panning)/ 100.f : 1.f;
+
 	for (int i=0; i<numSamples; ++i)
 	{
-		dataL[i] = inL[i];
-		dataR[i] = inR[i];
+		dataL[i] = inL[i] * inGainL;
+		dataR[i] = inR[i] * inGainR;
 	}
 
 	delay.processBlock(dataL, dataR, numSamples);
 
 	for (int i=0; i<numSamples; ++i)
 	{
-		dataL[i] *= volumeLin;
-		dataR[i] *= volumeLin;
+		dataL[i] *= volumeLin * outGainL;
+		dataR[i] *= volumeLin * outGainR;
 	}
-
 }
 

@@ -442,7 +442,7 @@ void PitchedDelayAudioProcessor::getStateInformation (MemoryBlock& destData)
 	xml.setAttribute("currenttab", jmax(0, currentTab));
 	xml.setAttribute("showtooltips", showTooltips ? 1 : 0);
 
-  copyXmlToBinary(xml, destData);
+	copyXmlToBinary(xml, destData);
 }
 
 void PitchedDelayAudioProcessor::setStateInformation (const void* data, int sizeInBytes)

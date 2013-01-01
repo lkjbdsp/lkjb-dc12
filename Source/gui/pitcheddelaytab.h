@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  27 Oct 2012 3:10:07pm
+  Creation date:  30 Dec 2012 2:48:43pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_602CBFFD__
-#define __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_602CBFFD__
+#ifndef __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_A34B477E__
+#define __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_A34B477E__
 
 //[Headers]	 -- You can add your own extra header files here --
 #include "JuceHeader.h"
@@ -115,6 +115,8 @@ private:
  ToggleButton* tbMono;
  ToggleButton* tbStereo;
  ToggleButton* tbPingpong;
+ Label* lPan;
+ Slider* sPan;
  Path internalPath1;
 
 
@@ -125,4 +127,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_602CBFFD__
+#endif   // __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_A34B477E__
