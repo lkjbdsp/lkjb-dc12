@@ -319,6 +319,9 @@
     <ClCompile Include="..\..\Source\dsp\delaytabdsp.cpp">
       <Filter>PitchedDelay\Source\dsp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\dsp\simpledetune.cpp">
+      <Filter>PitchedDelay\Source\dsp</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\dsp\pitchdiracle.cpp">
       <Filter>PitchedDelay\Source\dsp</Filter>
     </ClCompile>
@@ -1480,6 +1483,9 @@
       <Filter>PitchedDelay\Source\dsp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\dsp\delaytabdsp.h">
+      <Filter>PitchedDelay\Source\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\dsp\simpledetune.h">
       <Filter>PitchedDelay\Source\dsp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\dsp\PitchBase.h">

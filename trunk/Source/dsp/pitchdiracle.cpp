@@ -1,4 +1,6 @@
 #include "pitchdiracle.h"
+#if ! _WIN64
+
 #include "../DiracLE/Dirac.h"
 
 
@@ -116,3 +118,4 @@ void PitchDiracLE::destroyDirac()
 	}
 }
 
+#endif

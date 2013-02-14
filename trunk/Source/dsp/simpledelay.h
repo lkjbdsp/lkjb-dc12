@@ -90,11 +90,11 @@ public:
 
 	SimpleDelay(double maxDelaySeconds = 4)
 		: maxDelay(maxDelaySeconds),
-			sampleRate(44100),
+			sampleRate(0),
 			dataLength(0),
 			delay(0)
 	{
-		
+		setSampleRate(44100);
 	}
 
 	virtual ~SimpleDelay()
@@ -103,9 +103,9 @@ public:
 
 	void setSampleRate(double samplerate)
 	{
-		const int newDataLength = int(maxDelay * sampleRate);
+		const int newDataLength = int(maxDelay * samplerate);
 
-		if (sampleRate == sampleRate && newDataLength == dataLength)
+		if (sampleRate == samplerate && newDataLength == dataLength)
 			return;
 
 		sampleRate = samplerate;

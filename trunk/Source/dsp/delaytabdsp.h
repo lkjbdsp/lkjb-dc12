@@ -21,6 +21,8 @@ public:
 		kSync,
 		kPitchType,
 		kPrePitch,
+		kPreDelay,
+		kPreDelayVol,
 		kDelay,
 		kFeedback,
 		
@@ -83,11 +85,15 @@ private:
 	void processMono(const float* inL, const float* inR, int numSamples);
 	void processStereo(const float* inL, const float* inR, int numSamples);
 
+	SimpleDelay preDelayL;
+	SimpleDelay preDelayR;
 	PitchedDelay delay;
 
 	double volume;
 	float volumeLin;
 	float panning;
+
+	double preVolume;
 
 	bool enabled;
 
@@ -97,6 +103,10 @@ private:
 
 	HeapBlock<float> dataL;
 	HeapBlock<float> dataR;
+
+	HeapBlock<float> dataPreL;
+	HeapBlock<float> dataPreR;
+
 	int dataSize;
 };
 

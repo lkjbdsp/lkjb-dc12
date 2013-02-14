@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  30 Dec 2012 2:48:43pm
+  Creation date:  13 Feb 2013 7:22:10pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_A34B477E__
-#define __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_A34B477E__
+#ifndef __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_1C1B489C__
+#define __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_1C1B489C__
 
 //[Headers]	 -- You can add your own extra header files here --
 #include "JuceHeader.h"
@@ -58,6 +58,9 @@ public:
 	double getDelaySeconds();
 	void setDelaySeconds(double seconds, bool sendMessage=false);
 
+	double getPreDelaySeconds();
+	void setPreDelaySeconds(double seconds, bool sendMessage=false);
+
 	void timerCallback();
 
 	void setParam(int index, double value);
@@ -68,10 +71,10 @@ public:
 	//[/UserMethods]
 
 	void paint (Graphics& g);
- void resized();
- void sliderValueChanged (Slider* sliderThatWasMoved);
- void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
- void buttonClicked (Button* buttonThatWasClicked);
+	void resized();
+	void sliderValueChanged (Slider* sliderThatWasMoved);
+	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+	void buttonClicked (Button* buttonThatWasClicked);
 
 
 
@@ -83,6 +86,9 @@ private:
 	double getSliderDelaySeconds();
 	void updateBPM();
 
+	double quantizeDelay(double seconds);
+	double unQuantizeDelay(double sliderValue);
+
 	PitchedDelayAudioProcessor* filter;
 	const int delayIndex;
 
@@ -93,31 +99,34 @@ private:
 
 	//==============================================================================
 	Slider* sDelay;
- Label* label;
- ComboBox* cbSync;
- Slider* sPitch;
- ToggleButton* tbPostPitch;
- Slider* sFeedback;
- Label* label3;
- Slider* sFreq;
- Label* label4;
- ToggleButton* tbSemitones;
- Slider* sQfactor;
- Label* label5;
- ComboBox* cbFilter;
- Label* label6;
- Slider* sGain;
- Label* label7;
- ToggleButton* tbEnable;
- Slider* sVolume;
- Label* label8;
- ComboBox* cbPitch;
- ToggleButton* tbMono;
- ToggleButton* tbStereo;
- ToggleButton* tbPingpong;
- Label* lPan;
- Slider* sPan;
- Path internalPath1;
+	Label* label;
+	ComboBox* cbSync;
+	Slider* sPitch;
+	ToggleButton* tbPostPitch;
+	Slider* sFeedback;
+	Label* label3;
+	Slider* sFreq;
+	Label* label4;
+	ToggleButton* tbSemitones;
+	Slider* sQfactor;
+	Label* label5;
+	ComboBox* cbFilter;
+	Label* label6;
+	Slider* sGain;
+	Label* label7;
+	ToggleButton* tbEnable;
+	Slider* sVolume;
+	Label* label8;
+	ComboBox* cbPitch;
+	ToggleButton* tbMono;
+	ToggleButton* tbStereo;
+	ToggleButton* tbPingpong;
+	Label* lPan;
+	Slider* sPan;
+	Slider* sPreDelay;
+	Label* label2;
+	Slider* sPreVolume;
+	Path internalPath1;
 
 
 	//==============================================================================
@@ -127,4 +136,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_A34B477E__
+#endif   // __JUCER_HEADER_PITCHEDDELAYTAB_PITCHEDDELAYTAB_1C1B489C__

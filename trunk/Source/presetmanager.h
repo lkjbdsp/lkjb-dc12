@@ -38,7 +38,7 @@ public:
 
 						xmlString.copyToUTF8(d + 8, stringLength + 1);
 
-						processor->setStateInformation(mb.getData(), mb.getSize());
+						processor->setStateInformation(mb.getData(), (int) mb.getSize());
 					}
 					break;
 				}
@@ -78,7 +78,7 @@ public:
 
 			char* cdata = (char*) mb.getData();			
 
-			String data(String::fromUTF8(cdata+8, mb.getSize() - 8));
+			String data(String::fromUTF8(cdata+8, (int) mb.getSize() - 8));
 
 			XmlDocument xmlDoc(data);
 			XmlElement* xml = xmlDoc.getDocumentElement();

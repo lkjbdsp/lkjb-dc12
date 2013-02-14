@@ -4,18 +4,23 @@
 
 DelayTabDsp::DelayTabDsp(const String& id)
 : Parameters(id),
+	preDelayL(MAXDELAYSECONDS),
+	preDelayR(MAXDELAYSECONDS),
 	volume(0),
 	volumeLin(1.f),
 	panning(0.f),
+	preVolume(0),
 	enabled(false),
 	mode(kMono),
 	sync(0),
 	dataSize(0)
 {
 	addParameter(kPitch, "Pitch", -12, 12, 0, 0);
-	addParameter(kSync, "Sync", 0, 7, 0, 0);
+	addParameter(kSync, "Sync", 0, 9, 0, 0);
 	addParameter(kPitchType, "PitchType", 0, (int) delay.getNumPitches() + 1, 0, 0);
 	addParameter(kPrePitch, "PrePitch", 0, 1, 0, 0);
+	addParameter(kPreDelay, "Predelay", 0, MAXDELAYSECONDS, 0, 0);
+	addParameter(kPreDelayVol, "Pre-Volume", -60, 0, 0, 0);
 	addParameter(kDelay, "Delay", 0, MAXDELAYSECONDS, 0, MAXDELAYSECONDS/2);
 	addParameter(kFeedback, "Feedback", 0, 100, 0, 0);
 
@@ -44,6 +49,13 @@ void DelayTabDsp::setParam(int index, double val)
 		break;
 	case kSync:
 		sync = val;
+		break;
+	case kPreDelay:
+		preDelayL.setDelay(val);
+		preDelayR.setDelay(val);
+		break;
+	case kPreDelayVol:
+		preVolume = val;
 		break;
 	case kDelay:
 		delay.setDelay(val, delay.isPrePitch());
@@ -109,6 +121,12 @@ double DelayTabDsp::getParam(int index)
 	case kSync:
 		tmp = sync;
 		break;
+	case kPreDelay:
+		tmp = preDelayL.getCurrentDelay();
+		break;
+	case kPreDelayVol:
+		tmp = preVolume;
+		break;
 	case kDelay:
 		tmp = delay.getDelay();
 		break;
@@ -160,9 +178,10 @@ double DelayTabDsp::getParam(int index)
 
 void DelayTabDsp::prepareToPlay(double sampleRate, int numSamples)
 {
+	preDelayL.setSampleRate(sampleRate);
+	preDelayR.setSampleRate(sampleRate);
 	delay.prepareToPlay(sampleRate, numSamples);
 	checkDataSize(numSamples);
-
 }
 
 void DelayTabDsp::checkDataSize(int numSamples)
@@ -171,6 +190,8 @@ void DelayTabDsp::checkDataSize(int numSamples)
 	{
 		dataL.realloc(numSamples);
 		dataR.realloc(numSamples);
+		dataPreL.realloc(numSamples);
+		dataPreR.realloc(numSamples);
 		dataSize = numSamples;
 		clearData();
 	}
@@ -184,6 +205,8 @@ void DelayTabDsp::clearData()
 	{
 		dataL[i] = 0;
 		dataR[i] = 0;
+		dataPreL[i] = 0;
+		dataPreR[i] = 0;
 	}
 }
 
@@ -209,13 +232,36 @@ void DelayTabDsp::processMono(const float* inL, const float* inR, int numSamples
 	for (int i=0; i<numSamples; ++i)
 		dataL[i] = 0.5f * (inL[i] + inR[i]);
 
+	if (preDelayL.getDelayLengthSeconds() > 0)
+	{
+		preDelayL.processBlock(dataL, numSamples);
+
+		for (int i=0; i<numSamples; ++i)
+			dataPreL[i] = dataL[i];
+	}
+
 	delay.processBlock(dataL, numSamples);
 
-	for (int i=0; i<numSamples; ++i)
+	if (preDelayL.getDelayLengthSeconds() > 0)
 	{
-		const float x = dataL[i] * volumeLin;
-		dataL[i] = x * gainLeft;
-		dataR[i] = x * gainRight;
+		const float preGain = Decibels::decibelsToGain((float) preVolume);
+
+		for (int i=0; i<numSamples; ++i)
+		{
+			const float x = dataL[i] * volumeLin;
+			const float preX = dataPreL[i];
+			dataL[i] = (x + preX * preGain) * gainLeft;
+			dataR[i] = (x + preX * preGain) * gainRight;
+		}
+	}
+	else
+	{
+		for (int i=0; i<numSamples; ++i)
+		{
+			const float x = dataL[i] * volumeLin;
+			dataL[i] = x * gainLeft;
+			dataR[i] = x * gainRight;
+		}
 	}
 }
 
@@ -234,12 +280,44 @@ void DelayTabDsp::processStereo(const float* inL, const float* inR, int numSampl
 		dataR[i] = inR[i] * inGainR;
 	}
 
+	if (preDelayL.getDelayLengthSeconds() > 0)
+	{
+		preDelayL.processBlock(dataL, numSamples);
+		preDelayR.processBlock(dataR, numSamples);
+
+		for (int i=0; i<numSamples; ++i)
+		{
+			dataPreL[i] = dataL[i];
+			dataPreR[i] = dataR[i];
+		}
+	}
+
 	delay.processBlock(dataL, dataR, numSamples);
 
-	for (int i=0; i<numSamples; ++i)
+	if (preDelayL.getDelayLengthSeconds() > 0 && preVolume > -60)
 	{
-		dataL[i] *= volumeLin * outGainL;
-		dataR[i] *= volumeLin * outGainR;
+		const float preGain = Decibels::decibelsToGain((float) preVolume);
+		const float gainL = volumeLin * outGainL;
+		const float gainR = volumeLin * outGainR;
+		const float preGainL = preGain * outGainL;
+		const float preGainR = preGain * outGainR;
+
+		for (int i=0; i<numSamples; ++i)
+		{
+			dataL[i] = dataL[i] * gainL + dataPreL[i] * preGainL;
+			dataR[i] = dataR[i] * gainR + dataPreR[i] * preGainR;
+		}
+	}
+	else
+	{
+		const float gainL = volumeLin * outGainL;
+		const float gainR = volumeLin * outGainL;
+
+		for (int i=0; i<numSamples; ++i)
+		{
+			dataL[i] *= gainL;
+			dataR[i] *= gainR;
+		}
 	}
 }
 

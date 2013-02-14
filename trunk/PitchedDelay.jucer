@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.1.0"
+<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.2.0"
               bundleIdentifier="com.lkjb.PitchedDelay" buildVST="1" buildRTAS="0"
               buildAU="1" pluginName="PitchedDelay" pluginDesc="PitchedDelay"
               pluginManufacturer="Lkjb" pluginManufacturerCode="Lkjb" pluginCode="lkPD"
@@ -68,6 +68,9 @@
         <FILE id="Qwny9Q" name="basicfilters.h" compile="0" resource="0" file="Source/dsp/basicfilters.h"/>
         <FILE id="X7hBZs" name="delaytabdsp.cpp" compile="1" resource="0" file="Source/dsp/delaytabdsp.cpp"/>
         <FILE id="R7dzcG" name="delaytabdsp.h" compile="0" resource="0" file="Source/dsp/delaytabdsp.h"/>
+        <FILE id="ZtsJp7" name="simpledetune.cpp" compile="1" resource="0"
+              file="Source/dsp/simpledetune.cpp"/>
+        <FILE id="LI4yMZ" name="simpledetune.h" compile="0" resource="0" file="Source/dsp/simpledetune.h"/>
         <FILE id="xx3z6v" name="PitchBase.h" compile="0" resource="0" file="Source/dsp/PitchBase.h"/>
         <FILE id="U3H12d" name="pitchdiracle.cpp" compile="1" resource="0"
               file="Source/dsp/pitchdiracle.cpp"/>

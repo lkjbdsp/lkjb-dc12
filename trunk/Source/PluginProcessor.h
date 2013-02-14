@@ -52,54 +52,56 @@ public:
 	};
 
 
-  //==============================================================================
-  PitchedDelayAudioProcessor();
-  ~PitchedDelayAudioProcessor();
+	//==============================================================================
+	PitchedDelayAudioProcessor();
+	~PitchedDelayAudioProcessor();
 
-  //==============================================================================
-  void prepareToPlay (double sampleRate, int samplesPerBlock);
-  void releaseResources();
+	//==============================================================================
+	void prepareToPlay (double sampleRate, int samplesPerBlock);
+	void releaseResources();
 
-  void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+	void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
-  //==============================================================================
-  AudioProcessorEditor* createEditor();
-  bool hasEditor() const;
+	//==============================================================================
+	AudioProcessorEditor* createEditor();
+	bool hasEditor() const;
 
-  //==============================================================================
-  const String getName() const;
+	//==============================================================================
+	const String getName() const;
 
-  int getNumParameters();
+	int getNumParameters();
 
-  float getParameter (int index);
-  void setParameter (int index, float newValue);
+	float getParameter (int index);
+	void setParameter (int index, float newValue);
 
-  const String getParameterName (int index);
-  const String getParameterText (int index);
+	const String getParameterName (int index);
+	const String getParameterText (int index);
 
-  const String getInputChannelName (int channelIndex) const;
-  const String getOutputChannelName (int channelIndex) const;
-  bool isInputChannelStereoPair (int index) const;
-  bool isOutputChannelStereoPair (int index) const;
+	const String getInputChannelName (int channelIndex) const;
+	const String getOutputChannelName (int channelIndex) const;
+	bool isInputChannelStereoPair (int index) const;
+	bool isOutputChannelStereoPair (int index) const;
 
-  bool acceptsMidi() const;
-  bool producesMidi() const;
+	bool acceptsMidi() const;
+	bool producesMidi() const;
 	bool silenceInProducesSilenceOut() const;
-  //==============================================================================
-  int getNumPrograms();
-  int getCurrentProgram();
-  void setCurrentProgram (int index);
-  const String getProgramName (int index);
-  void changeProgramName (int index, const String& newName);
+	//==============================================================================
+	int getNumPrograms();
+	int getCurrentProgram();
+	void setCurrentProgram (int index);
+	const String getProgramName (int index);
+	void changeProgramName (int index, const String& newName);
 
-  //==============================================================================
-  void getStateInformation (MemoryBlock& destData);
-  void setStateInformation (const void* data, int sizeInBytes);
+	//==============================================================================
+	void getStateInformation (MemoryBlock& destData);
+	void setStateInformation (const void* data, int sizeInBytes);
 
 	DelayTabDsp* getDelay(int index)
 	{
 		return delays[index];
 	}
+
+
 
 	int getNumDelays()
 	{

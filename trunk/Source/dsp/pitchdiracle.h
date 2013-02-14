@@ -5,6 +5,8 @@
 #include "PitchBase.h"
 #include "basicfilters.h"
 
+#if ! _WIN64
+
 
 class PitchDiracLE : public PitchBase
 {
@@ -47,6 +49,6 @@ private:
 	JUCE_DECLARE_NON_COPYABLE(PitchDiracLE);
 
 };
-
+#endif
 #endif // __PITCHDIRACLE__ 
 

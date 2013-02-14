@@ -74,7 +74,7 @@ PitchedDelayAudioProcessorEditor::PitchedDelayAudioProcessorEditor (PitchedDelay
 		updatePresets();
 	}
 
-	setSize (600, 410);
+	setSize (600, 435);
 
 	startTimer(100);
 }
@@ -91,7 +91,7 @@ void PitchedDelayAudioProcessorEditor::resized()
 	presetList.setBounds(getWidth() - 360, 0, 300, 20);
 
 	graph->setBounds(0, 20, 600, 100);
-	tabs.setBounds(0, 120, 500, 380);
+	tabs.setBounds(0, 120, 500, 315);
 	dryVolume.setBounds(502, 140, 46, 265);
 	masterVolume.setBounds(552, 140, 46, 265);
 	showTooltips.setBounds(10, 0, 100, 20);
@@ -211,6 +211,14 @@ void PitchedDelayAudioProcessorEditor::actionListenerCallback(const String& mess
 		else if (param == "Mode")
 		{
 			paramIdx = DelayTabDsp::kMode;
+		}
+		else if (param == "Predelay")
+		{
+			paramIdx = DelayTabDsp::kPreDelay;
+		}
+		else if (param == "PredelayVol")
+		{
+			paramIdx = DelayTabDsp::kPreDelayVol;
 		}
 		else
 		{

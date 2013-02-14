@@ -21,8 +21,6 @@ public:
 	virtual void clear() = 0;
 	virtual String getName() = 0;
 
-
-
 protected:
 };
 

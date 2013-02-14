@@ -146,6 +146,8 @@
           <File RelativePath="..\..\Source\dsp\basicfilters.h"/>
           <File RelativePath="..\..\Source\dsp\delaytabdsp.cpp"/>
           <File RelativePath="..\..\Source\dsp\delaytabdsp.h"/>
+          <File RelativePath="..\..\Source\dsp\simpledetune.cpp"/>
+          <File RelativePath="..\..\Source\dsp\simpledetune.h"/>
           <File RelativePath="..\..\Source\dsp\PitchBase.h"/>
           <File RelativePath="..\..\Source\dsp\pitchdiracle.cpp"/>
           <File RelativePath="..\..\Source\dsp\pitchdiracle.h"/>
