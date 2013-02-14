@@ -696,7 +696,7 @@ void PitchedDelayTab::setPreDelaySeconds(double seconds, bool sendMessage)
 	DelayTabDsp* delayDsp = filter->getDelay(delayIndex);
 
 	const Range<double> delayRange = delayDsp->getCurrentDelayRange();
-	seconds = delayRange.clipValue(seconds);
+	seconds = jmin(delayRange.getEnd(), seconds);;
 
 	const double val = quantizeDelay(seconds);
 
