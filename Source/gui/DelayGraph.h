@@ -51,10 +51,10 @@ public:
 	//[/UserMethods]
 
 	void paint (Graphics& g);
- void resized();
- void mouseDown (const MouseEvent& e);
- void mouseDrag (const MouseEvent& e);
- void mouseUp (const MouseEvent& e);
+	void resized();
+	void mouseDown (const MouseEvent& e);
+	void mouseDrag (const MouseEvent& e);
+	void mouseUp (const MouseEvent& e);
 
 
 
@@ -73,12 +73,13 @@ private:
 		}
 	};
 
-	int getDelayUnderMouse(Point<int> mousePos, float minDistance = 5);
+	int getDelayUnderMouse(Point<int> mousePos, float minDistance = 10);
 
 	OwnedArray<PitchedDelayTab>& tabs;
 	PitchedDelayAudioProcessor* Proc;
 	HeapBlock<double> currentDelays;
 	HeapBlock<double> currentVolumes;
+	HeapBlock<double> currentPreVolumes;
 	HeapBlock<double> currentFeedback;
 	HeapBlock<bool> currentEnabled;
 	int currentSelected;

@@ -131,6 +131,7 @@
     <ClCompile Include="..\..\Source\DiracLE\diracstatic.cpp"/>
     <ClCompile Include="..\..\Source\dsp\BandLimit.cpp"/>
     <ClCompile Include="..\..\Source\dsp\delaytabdsp.cpp"/>
+    <ClCompile Include="..\..\Source\dsp\simpledetune.cpp"/>
     <ClCompile Include="..\..\Source\dsp\pitchdiracle.cpp"/>
     <ClCompile Include="..\..\Source\dsp\pitcheddelay.cpp"/>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
@@ -1163,6 +1164,7 @@
     <ClInclude Include="..\..\Source\dsp\BandLimit.h"/>
     <ClInclude Include="..\..\Source\dsp\basicfilters.h"/>
     <ClInclude Include="..\..\Source\dsp\delaytabdsp.h"/>
+    <ClInclude Include="..\..\Source\dsp\simpledetune.h"/>
     <ClInclude Include="..\..\Source\dsp\PitchBase.h"/>
     <ClInclude Include="..\..\Source\dsp\pitchdiracle.h"/>
     <ClInclude Include="..\..\Source\dsp\pitcheddelay.h"/>

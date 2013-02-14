@@ -442,6 +442,8 @@ void PitchedDelayAudioProcessor::getStateInformation (MemoryBlock& destData)
 	xml.setAttribute("currenttab", jmax(0, currentTab));
 	xml.setAttribute("showtooltips", showTooltips ? 1 : 0);
 
+	xml.setAttribute("extended", "1");
+
 	copyXmlToBinary(xml, destData);
 }
 
@@ -451,9 +453,19 @@ void PitchedDelayAudioProcessor::setStateInformation (const void* data, int size
 
 	if (xml != 0 && xml->getTagName() == "PitchedDelay")
 	{
+		const bool extendedsync = xml->hasAttribute("extended");
+
 		for (int i=0; i<getNumParameters(); ++i)
 		{
-			const float val = (float) xml->getDoubleAttribute(getParameterName(i), -1000);
+			const String paramName(getParameterName(i));
+
+			float val = (float) xml->getDoubleAttribute(paramName, -1000);
+
+			if (! extendedsync && paramName.contains("Sync"))
+				val = val*7/9;
+
+			if (! extendedsync && paramName.contains("PitchType"))
+				val = val*5/8;			
 
 			if (val > -1000)
 				setParameterNotifyingHost(i, val);

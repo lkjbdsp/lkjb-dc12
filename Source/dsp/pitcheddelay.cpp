@@ -1,6 +1,7 @@
 #include "pitcheddelay.h"
 
 #include "pitchdiracle.h"
+#include "simpledetune.h"
 
 PitchedDelay::PitchedDelay(float samplerate)
 	: pitch(1.f),
@@ -15,10 +16,15 @@ PitchedDelay::PitchedDelay(float samplerate)
 		delayR(MAXDELAYSECONDS),
 		sizeLastData(0)
 {
+#if ! _WIN64
 	pitcher.addPitchProc(new PitchDiracLE(PitchDiracLE::kPreview));
 	pitcher.addPitchProc(new PitchDiracLE(PitchDiracLE::kGood));
 	pitcher.addPitchProc(new PitchDiracLE(PitchDiracLE::kBetter));
 	pitcher.addPitchProc(new PitchDiracLE(PitchDiracLE::kBest));
+#endif
+	pitcher.addPitchProc(new Detune("Detune (low-latency)", 256));
+	pitcher.addPitchProc(new Detune("Detune (compromise)", 1024));
+	pitcher.addPitchProc(new Detune("Detune (best)", 4096));
 
 	prepareToPlay(44100, 512);
 }
@@ -89,6 +95,8 @@ void PitchedDelay::setDelay(double time, bool prePitch)
 	currentTime = time;
 
 	const int latency = pitcher.getLatency();
+
+	DBG("setDelay("+String(time*1000, 1)+" ms, "+String(prePitch?"prePitch)":"postPitch)") +" pitcherlatency="+String(latency));
 
 	const int delaySamplesPrePitch = jlimit(0, delayL.getDataLength(), int(time*sampleRate));
 	const int delaySamples = jmax(0, preDelayPitch ? delaySamplesPrePitch : int(delayRange.clipValue(time)*sampleRate) - latency);
@@ -407,8 +415,8 @@ void PitchedDelay::setCurrentPitch(int index)
 		index = -1;
 
 	pitcher.setPitchProc(index);
-
 	enablePitch = index >= 0;
+	updateLatency(enablePitch ? pitcher.getLatency() : 0);
 }
 
 void PitchedDelay::clearLastData()

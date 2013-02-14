@@ -35,16 +35,17 @@ DelayGraph::DelayGraph (OwnedArray<PitchedDelayTab>& tabs_, PitchedDelayAudioPro
       dragging(false)
 {
 
- //[UserPreSize]
+	//[UserPreSize]
 	const int numDelays = Proc->getNumDelays();
 	currentDelays.allocate(numDelays, true);
 	currentVolumes.allocate(numDelays, true);
+	currentPreVolumes.allocate(numDelays, true);
 	currentEnabled.allocate(numDelays, true);
 	currentFeedback.allocate(numDelays, true);
 
- //[/UserPreSize]
+	//[/UserPreSize]
 
- setSize (600, 100);
+	setSize (600, 100);
 
 
 	//[Constructor] You can add your own custom stuff here..
@@ -75,81 +76,99 @@ void DelayGraph::paint (Graphics& g)
     g.drawRect (0, 0, getWidth() - 0, getHeight() - 0, 1);
 
     //[UserPaint] Add your own custom painting code here..
-		const float w = (float) getWidth();
-		const float h = (float) getHeight();
+	const float w = (float) getWidth();
+	const float h = (float) getHeight();
 
-		const double minDelay = 0;
-		const double maxDelay = Proc->getDelay(0)->getCurrentDelayRange().getEnd();
-		const int numDelays = Proc->getNumDelays();
+	const double minDelay = 0;
+	const double maxDelay = Proc->getDelay(0)->getCurrentDelayRange().getEnd();
+	const int numDelays = Proc->getNumDelays();
 
-		currentSelected = Proc->currentTab;
+	currentSelected = Proc->currentTab;
 
-		g.setColour(Colour(0xFFD0D0D0));
+	g.setColour(Colour(0xFFD0D0D0));
 
-		for (float t=(float) minDelay; t < maxDelay; t += 0.25f)
+	for (float t=(float) minDelay; t < maxDelay; t += 0.25f)
+	{
+		const int x = int(1 + (w-2) * (t - minDelay) / (maxDelay - minDelay));		
+		float y =  3.f;
+
+		if (float(int(t)) == t)
 		{
-			const int x = int(1 + (w-2) * (t - minDelay) / (maxDelay - minDelay));		
-			float y =  3.f;
-
-			if (float(int(t)) == t)
-			{
-				g.setFont(Font(10.f).boldened());
-				y = 0;
-			}
-			else
-			{
-				g.setFont(Font(9.f));
-			}
-
-			g.drawVerticalLine(x, y, 12.f);
-			g.drawText(String(t, 2), x+2, 0, 40, 12, Justification::bottomLeft, false);
+			g.setFont(Font(10.f).boldened());
+			y = 0;
 		}
-		g.drawHorizontalLine(12, 0.f, w);
-
-
-		for (int i=0; i<numDelays; ++i)
+		else
 		{
-			DelayTabDsp* delay = Proc->getDelay(i);
-
-			const bool enabled = delay->getParam(DelayTabDsp::kEnabled) > 0.5;
-			double volume = delay->getParam(DelayTabDsp::kVolume);
-			const double delayTime = delay->getParam(DelayTabDsp::kDelay);
-			const double feedback = delay->getParam(DelayTabDsp::kFeedback);
-
-			currentEnabled[i] = enabled;
-			currentVolumes[i] = volume;
-			currentDelays[i] = delayTime;
-			currentFeedback[i] = feedback;
-
-			const float x = float(1 + (w-2) * (delayTime - minDelay) / (maxDelay - minDelay));
-			const float y = float(h - (h-16) * (volume+60)/60);
-
-			Colour c(currentSelected == i ? Colours::red : Colours::white);
-
-			g.setColour(c.withAlpha(enabled ? 1.f : 0.3f));
-
-			g.drawVerticalLine((int) x, y, h-1);
-			g.drawRect(x-2.5f, y-2.5f, 5.f, 5.f, 1.f);
-
-			if (enabled)
-			{
-				const double volChange = Decibels::gainToDecibels(feedback / 100);
-
-				g.setColour(c.withAlpha(currentSelected == i ? 0.3f: 0.1f));
-
-				for (float fx = x*2; fx < w-1 && volume > -60; fx += x)
-				{
-					volume += volChange;
-					const float y = float(h - (h-16) * (volume+60)/60);
-
-					g.drawVerticalLine((int) fx, y, h-1);
-				}
-
-			}
-
+			g.setFont(Font(9.f));
 		}
 
+		g.drawVerticalLine(x, y, 12.f);
+		g.drawText(String(t, 2), x+2, 0, 40, 12, Justification::bottomLeft, false);
+	}
+	g.drawHorizontalLine(12, 0.f, w);
 
+
+	for (int i=0; i<numDelays; ++i)
+	{
+		DelayTabDsp* delay = Proc->getDelay(i);
+
+		const bool enabled = delay->getParam(DelayTabDsp::kEnabled) > 0.5;
+		double volume = delay->getParam(DelayTabDsp::kVolume);
+		const double preVolume = delay->getParam(DelayTabDsp::kPreDelayVol);
+		const double delayTime = delay->getParam(DelayTabDsp::kDelay);
+		const double delayOffset = delay->getParam(DelayTabDsp::kPreDelay);
+		const double feedback = delay->getParam(DelayTabDsp::kFeedback);
+
+		currentEnabled[i] = enabled;
+		currentVolumes[i] = volume;
+		currentPreVolumes[i] = preVolume;
+		currentDelays[i] = delayTime + delayOffset;
+		currentFeedback[i] = feedback;
+
+		const float xoffset = float(1 + (w-2) * (delayOffset - minDelay) / (maxDelay - minDelay));
+		const float x = float(1 + (w-2) * (delayTime - minDelay) / (maxDelay - minDelay));
+		const float y = float(h - (h-16) * (volume+60)/60);
+
+		Colour c(currentSelected == i ? Colours::red : Colours::white);
+
+		g.setColour(c.withAlpha(enabled ? 1.f : 0.3f));
+
+		g.drawVerticalLine(int (x+xoffset), y, h-1);
+		g.drawRect(x+xoffset-2.5f, y-2.5f, 5.f, 5.f, 1.f);
+
+		if (currentSelected == i && delayOffset > 0)
+		{
+			const float xoffs = float(1 + (w-2) * (delayOffset - minDelay) / (maxDelay - minDelay));
+			const float y = float(h - (h-16) * (preVolume+60)/60);
+			
+			Path p;
+			p.startNewSubPath(xoffs, y);
+			p.lineTo(xoffs, h-1.f);
+			g.setColour(c.withAlpha(0.75f));
+			PathStrokeType pst(0.5f);
+			const float lengths[2] = {3.f, 3.f};
+			const int numLengths = 2;
+
+			pst.createDashedStroke(p, p, lengths, numLengths);
+
+			g.strokePath(p, pst);
+		}
+
+		if (enabled)
+		{
+			const double volChange = Decibels::gainToDecibels(feedback / 100);
+
+			g.setColour(c.withAlpha(currentSelected == i ? 0.3f: 0.1f));
+
+			for (float fx = x*2; fx < w-1 && volume > -60; fx += x)
+			{
+				volume += volChange;
+				const float y = float(h - (h-16) * (volume+60)/60);
+
+				g.drawVerticalLine(int (fx+xoffset), y, h-1);
+			}
+		}
+	}
     //[/UserPaint]
 }
 
@@ -190,7 +209,8 @@ void DelayGraph::mouseDrag (const MouseEvent& e)
 		const double minDelay = 0;
 		const double maxDelay = delay->getCurrentDelayRange().getEnd();
 
-		const double delayTime = (mx - 1.f) / (w - 2.f) * (maxDelay - minDelay) + minDelay;
+		const double delayTimeOffset = delay->getParam(DelayTabDsp::kPreDelay);
+		const double delayTime = (mx - 1.f) / (w - 2.f) * (maxDelay - minDelay) + minDelay - delayTimeOffset;
 		const double volume = jlimit(-60., 0., (h - my) / (h - 16.) * 60 - 60);
 
 
@@ -260,10 +280,12 @@ void DelayGraph::timerCallback()
 
 		const bool enabled = delay->getParam(DelayTabDsp::kEnabled) > 0.5;
 		const double volume = delay->getParam(DelayTabDsp::kVolume);
-		const double delayTime = delay->getParam(DelayTabDsp::kDelay);
+		const double preVolume = delay->getParam(DelayTabDsp::kPreDelayVol);
+		const double delayTimeOffset = delay->getParam(DelayTabDsp::kPreDelay);
+		const double delayTime = delay->getParam(DelayTabDsp::kDelay) + delayTimeOffset;
 		const double feedback = delay->getParam(DelayTabDsp::kFeedback);
 
-		if (enabled != currentEnabled[i] || volume != currentVolumes[i] || delayTime != currentDelays[i] || currentFeedback[i] != feedback)
+		if (enabled != currentEnabled[i] || volume != currentVolumes[i] || preVolume != currentPreVolumes[i]|| delayTime != currentDelays[i] || currentFeedback[i] != feedback)
 		{
 			repaint();
 			break;
@@ -305,7 +327,8 @@ int DelayGraph::getDelayUnderMouse(Point<int> mousePos, float minDistance)
 	for (int i=0; i<numDelays; ++i)
 	{
 		DelayTabDsp* delay = Proc->getDelay(i);
-		const double delayTime = delay->getParam(DelayTabDsp::kDelay);
+		const double delayTimeOffset = delay->getParam(DelayTabDsp::kPreDelay);
+		const double delayTime = delay->getParam(DelayTabDsp::kDelay) + delayTimeOffset;
 		double volume = delay->getParam(DelayTabDsp::kVolume);
 
 		const float x = float(1 + (w-2) * (delayTime - minDelay) / (maxDelay - minDelay));
@@ -321,7 +344,6 @@ int DelayGraph::getDelayUnderMouse(Point<int> mousePos, float minDistance)
 	}
 
 	return newIndex;
-
 }
 
 
