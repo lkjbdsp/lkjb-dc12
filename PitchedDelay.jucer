@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.2.1"
+<JUCERPROJECT id="JH7QdM" name="PitchedDelay" projectType="audioplug" version="1.2.2"
               bundleIdentifier="com.lkjb.PitchedDelay" buildVST="1" buildRTAS="0"
               buildAU="1" pluginName="PitchedDelay" pluginDesc="PitchedDelay"
               pluginManufacturer="Lkjb" pluginManufacturerCode="Lkjb" pluginCode="lkPD"
@@ -31,15 +31,6 @@
                        libraryPath="$(SRCROOT)/../../Source/DiracLE"/>
       </CONFIGURATIONS>
     </XCODE_MAC>
-    <VS2005 targetFolder="Builds/VisualStudio2005" libraryType="1" juceFolder="D:\svn\prog\juceprojects\PitchedDelay\juce\modules"
-            vstFolder="c:\SDKs\vstsdk2.4">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" isDebug="1"
-                       optimisation="1" targetName="PitchedDelay"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" isDebug="0"
-                       optimisation="2" targetName="PitchedDelay"/>
-      </CONFIGURATIONS>
-    </VS2005>
     <VS2010 targetFolder="Builds/VisualStudio2010" libraryType="1" juceFolder="D:\svn\prog\juceprojects\PitchedDelay\juce\modules">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
