@@ -232,7 +232,7 @@ void DelayTabDsp::processMono(const float* inL, const float* inR, int numSamples
 	for (int i=0; i<numSamples; ++i)
 		dataL[i] = 0.5f * (inL[i] + inR[i]);
 
-	if (preDelayL.getDelayLengthSeconds() > 0)
+	if (preDelayL.getCurrentDelay() > 0)
 	{
 		preDelayL.processBlock(dataL, numSamples);
 
@@ -242,7 +242,7 @@ void DelayTabDsp::processMono(const float* inL, const float* inR, int numSamples
 
 	delay.processBlock(dataL, numSamples);
 
-	if (preDelayL.getDelayLengthSeconds() > 0)
+	if (preDelayL.getCurrentDelay() > 0)
 	{
 		const float preGain = Decibels::decibelsToGain((float) preVolume);
 
@@ -280,7 +280,7 @@ void DelayTabDsp::processStereo(const float* inL, const float* inR, int numSampl
 		dataR[i] = inR[i] * inGainR;
 	}
 
-	if (preDelayL.getDelayLengthSeconds() > 0)
+	if (preDelayL.getCurrentDelay() > 0)
 	{
 		preDelayL.processBlock(dataL, numSamples);
 		preDelayR.processBlock(dataR, numSamples);
@@ -294,7 +294,7 @@ void DelayTabDsp::processStereo(const float* inL, const float* inR, int numSampl
 
 	delay.processBlock(dataL, dataR, numSamples);
 
-	if (preDelayL.getDelayLengthSeconds() > 0 && preVolume > -60)
+	if (preDelayL.getCurrentDelay() > 0 && preVolume > -60)
 	{
 		const float preGain = Decibels::decibelsToGain((float) preVolume);
 		const float gainL = volumeLin * outGainL;
@@ -311,7 +311,7 @@ void DelayTabDsp::processStereo(const float* inL, const float* inR, int numSampl
 	else
 	{
 		const float gainL = volumeLin * outGainL;
-		const float gainR = volumeLin * outGainL;
+		const float gainR = volumeLin * outGainR;
 
 		for (int i=0; i<numSamples; ++i)
 		{
